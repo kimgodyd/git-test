@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>krpano.com - 01 (01)</title>
+	<meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, minimal-ui" />
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+	<meta http-equiv="x-ua-compatible" content="IE=edge" />
+	<style>
+		@-ms-viewport { width:device-width; }
+		@media only screen and (min-device-width:800px) { html { overflow:hidden; } }
+		html { height:100%; }
+		body { height:100%; overflow:hidden; margin:0; padding:0; font-family:Arial, Helvetica, sans-serif; font-size:16px; color:#FFFFFF; background-color:#000000; }
+	</style>
+</head>
+<body>
+
+
+
+
+
+<table width=100% height=100%>
+
+	<tr>
+		<td width="30%" height="100%">
+
+			<input type="button" value="Delete" onClick="javascript:deletespot();">
+			<input type="button" value="Insertall" onClick="javascript:insertspot();">
+			<input type="button" value="Insertcheck" onClick="javascript:insertcheck();">
+			<input type="button" value="save" onClick="javascript:savespot();">
+			<input type = "range" min = "0" max = "100" step = "10" name = "range"> 
+			
+			<div style="padding:5px; width:100px;">
+				<span><b><u>mouse</u></b></span><br>
+				<span>x=</span><span id="mouse_x"></span><br>
+				<span>y=</span><span id="mouse_y"></span><br>
+				<span>ath=</span><span id="mouse_ath"></span><br>
+				<span>atv=</span><span id="mouse_atv"></span><br><br><br>
+			</div>
+
+			<form enctype="multipart/form-data" action="insert.php" method="POST">
+				<table>
+					<tr>
+						<td>아파트 이름 :</td>
+						<td><input type="text" name="name" size="30" maxlength="30" value="" /></td>
+					</tr>
+					<tr>
+						<td>동 :</td>
+						<td><input type="text" name="dong" size="30" maxlength="30" value=""/></td>
+					</tr>
+					<tr>
+						<td>호 :</td>
+						<td><input type="text" name="ho" size="30" maxlength="30" value=""/></td>
+					</tr>
+					<tr>
+						<td>문제 종류 :</td>
+						<td><input type="text" name="type" size="30" maxlength="30" /></td>
+					</tr>
+					<tr>
+						<td>설명 :</td>
+						<td><textarea type="textarea" rows="8" cols="30" name="content"></textarea></td>
+					</tr>
+					<tr>
+						<!--<input type="hidden" name="MAX_FILE_SIZE" value="40000" />-->
+						<td>사진 : (한글경로 안됨!)</td>
+						<td><input name="picture" type="file" /></td>
+					</tr>
+					<tr>
+						<td><input type="submit" value="등록" /></td>
+					</tr>
+				</table>
+			</form>
+
+
+			
+			<script type="text/javascript">
+					
+				function getlookat()
+				{
+					var krpano = document.getElementById("krpanoSWFObject");
+
+					if (krpano && krpano.get)	// it can take some time until krpano is loaded and ready
+					{
+						krpano.call("screentosphere(mouse.x, mouse.y, mouseath, mouseatv); js( showmouseinfo() );");
+					}
+				}
+
+				function showmouseinfo()
+				{			
+					var krpano = document.getElementById("krpanoSWFObject");
+
+					var mouse_at_x = krpano.get("mouse.x");
+					var mouse_at_y = krpano.get("mouse.y");
+					var mouse_at_h = krpano.get("mouseath");
+					var mouse_at_v = krpano.get("mouseatv");
+
+					document.getElementById("mouse_x").innerHTML = mouse_at_x + "px";
+					document.getElementById("mouse_y").innerHTML = mouse_at_y + "px";
+					document.getElementById("mouse_ath").innerHTML = mouse_at_h.toFixed(2) + "°";
+					document.getElementById("mouse_atv").innerHTML = mouse_at_v.toFixed(2) + "°";
+				}
+
+				// update mouse info 30 times per second
+				var lookat_interval = setInterval('getlookat()', 1000.0 / 30.0);
+
+				function insertcheck()
+				{
+
+					var krpano = document.getElementById("krpanoSWFObject");
+
+					var mouse_at_h = krpano.get("mouseath");
+					var mouse_at_v = krpano.get("mouseatv");
+
+					krpano.set("hotspot[check].visible",true);
+					krpano.set("hotspot[check].ath",mouse_at_h);
+					krpano.set("hotspot[check].atv",mouse_at_v);
+				}
+
+				function deletespot()
+				{
+					var krpano = document.getElementById("krpanoSWFObject");
+
+					krpano.set("layer[test].visible",false);
+					krpano.set("hotspot[newspot].visible",false);
+					krpano.set("hotspot[newspot2].visible",false);
+
+				}
+
+				function insertspot()
+				{
+
+					var krpano = document.getElementById("krpanoSWFObject");
+
+					krpano.set("layer[test].visible",true);
+					krpano.set("hotspot[newspot].visible",true);
+					krpano.set("hotspot[newspot2].visible",true);
+
+				}
+
+				function savespot()
+				{
+					var krpano = document.getElementById("krpanoSWFObject");
+					krpano.save("tour2.xml");
+				}
+			</script>
+
+		</td>
+
+		<td width="70%" height="100%">
+			<script src="tour.js"></script>
+
+			<div id="pano" style="width:100%;height:100%;">
+				<noscript><table style="width:100%;height:100%;"><tr style="vertical-align:middle;"><td><div style="text-align:center;">ERROR:<br/><br/>Javascript not activated<br/><br/></div></td></tr></table></noscript>
+
+				<script>
+					embedpano({swf:"tour.swf", id:"krpanoSWFObject", xml:"tour.xml", target:"pano",  html5:(navigator.userAgent.indexOf("Android") >= 0 ? "prefer" : "auto"), passQueryParameters:true});
+					
+				</script>
+
+			</div>
+		</td>
+	</tr>
+</table>
+
+
+</body>
+</html>
